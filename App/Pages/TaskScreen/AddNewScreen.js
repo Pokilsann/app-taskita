@@ -22,8 +22,8 @@ export default AddNewScreen = ({ navigation }) => {
   const [date, setDate] = useState(new Date());
   const [mode, setMode] = useState("date");
   const [show, setShow] = useState(false);
-  const [text, setText] = useState("MM/DD/YYYY");
-  const [text1, setText1] = useState("HH:MM");
+  const [text, setText] = useState("Date");
+  const [text1, setText1] = useState("Time");
 
   const onChange = (event, selectedDate) => {
     const currentDate = selectedDate || date;
@@ -42,6 +42,11 @@ export default AddNewScreen = ({ navigation }) => {
     setShow(true);
     setMode(currentMode);
   }
+  const showMode2 = (currentMode2) => {
+    setShow(true);
+    setMode(currentMode2);
+  }
+  
 
 
   //Const untuk API
@@ -49,40 +54,26 @@ export default AddNewScreen = ({ navigation }) => {
   const [activedate, onChangeActiveDate] = React.useState(null);
   const [timestart, onChangeTimeStart] = React.useState(null);
   const [timeend, onChangeTimeEnd] = React.useState(null);
-  const [message, onSetMessage] = React.useState(null);
-  const [iserror, onError] = React.useState(null);
-  const [isLoading, onChangeLoading] = React.useState(false);
   const id = useSelector((state) => state.user.id)
 
-  const onAddNew=()=>{
-    onChangeLoading(true)
+  const onCheckLogin =()=>{
     axios.post('https://data.mongodb-api.com/app/data-yvczw/endpoint/data/v1/action/insertOne',{
         "dataSource": "Cluster0",
         "database": "app_taskita",
         "collection": "task",
-        "document": { 
-          "userId": id,
+        "filter": { 
+          "uid": id,
           "task": summary,
           "active_date": activedate,
           "time_start": timestart,
           "time_end": timeend,
-          "progress": "Open"
         }
     },{
         headers:{
             'api-key': 'zYwAQaYVJ2hdF6WVlhy4gFM7i6IOGAcAJ5lips8IYEjIkXjoksjPpuTBZvGjt4uC'
         }
     }).then(res=>{
-        navigation.replace('MainScreen',{screen:'TaskScreen'})
-        onSetMessage('Data Berhasil Ditambahkan')
-        alert('Data Berhasil Ditambahkan')
-    }).catch(err=>{
-      console.log(err)
-      onError(true)
-      onSetMessage('Data Gagal Ditambahkan')
-      alert([message])
-    }).finally(()=>{
-      onChangeLoading(false)
+        navigation.replace('MainScreen')
     })
 
     }
@@ -91,13 +82,13 @@ export default AddNewScreen = ({ navigation }) => {
     <SafeAreaView style={{ backgroundColor: "#261863", flex: 1 }}>     
       <View style={style.bodyContent}>
 
-        <ScrollView style={{ padding: 15 }}>
+        <ScrollView style={{ padding: 30 }}>
 
           <View>
             <Text style={style.summary}>Sumary Task</Text>
               <TextInput
-                numberOfLines={3}
-                maxLength={150}
+                numberOfLines={4}
+                maxLength={120}
                 value={summary}
                 multiline
                 placeholder={"Type Sumary Task"}
@@ -109,13 +100,13 @@ export default AddNewScreen = ({ navigation }) => {
           <View>
             <Text style={style.summary}>Date</Text>
             <View style={{ flexDirection: "row" }}>
-            <TouchableOpacity onPress={()=> onChange(setText)}>
-                <Text 
-                numberOfLines={1} 
+            
+                <Text
+                numberOfLines={2}
                 style={style.inputan}
                 onChangeText={onChangeActiveDate}
                 >{text}</Text>
-            </TouchableOpacity>
+            
 
               <TouchableOpacity onPress={() => showMode('date')}>
                 <View style={style.iconbg1}>
@@ -128,13 +119,13 @@ export default AddNewScreen = ({ navigation }) => {
           <View>
             <Text style={style.summary}>Time Start</Text>
             <View style={{ flexDirection: "row" }}>
-            <TouchableOpacity onPress={()=> onChange(setText1)}>
+            
                 <Text 
-                numberOfLines={1} 
+                numberOfLines={2} 
                 style={style.inputan}
                 onChangeText={onChangeTimeStart}
                 >{text1}</Text>
-              </TouchableOpacity>
+              
 
               <TouchableOpacity onPress={() => showMode("time")}>
                 <View style={style.iconbg}>
@@ -147,13 +138,13 @@ export default AddNewScreen = ({ navigation }) => {
           <View>
             <Text style={style.summary}>Time End</Text>
             <View style={{ flexDirection: "row" }}>
-            <TouchableOpacity onPress={()=> onChange(setText1)}>
+            
                 <Text 
-                numberOfLines={1} 
+                numberOfLines={2} 
                 style={style.inputan}
                 onChangeText={onChangeTimeEnd}
                 >{text1}</Text>
-              </TouchableOpacity>
+              
               
               <TouchableOpacity onPress={() => showMode("time")}>
                 <View style={style.iconbg}>
@@ -175,9 +166,8 @@ export default AddNewScreen = ({ navigation }) => {
 
           <PrimaryButton
             customeStyle={style.btnSubmitStyle}
-            onPress={()=>onAddNew()}
+            onPress={()=>onCheckLogin()}
             title="Submit Data"
-            isLoading={isLoading}
           />
 
         </ScrollView>
@@ -191,10 +181,10 @@ const style = StyleSheet.create({
   inputText: {
     borderColor: "#261863",
     backgroundColor: "#DADADA",
-    fontSize: 15,
+    fontSize: 16,
     paddingTop: 6,
-    paddingBottom: 3,
-    paddingRight: 0,
+    paddingBottom: 6,
+    paddingRight: 6,
     paddingLeft: 10,
     borderWidth: 1,
     borderRadius: 10,
@@ -203,17 +193,16 @@ const style = StyleSheet.create({
   inputan: {
     borderColor: "#261863",
     backgroundColor: "#DADADA",
-    fontSize: 12,
+    fontSize: 16,
     paddingTop: 15,
-    paddingRight: 0,
-    paddingLeft: 10,
+    paddingRight: 170,
+    paddingLeft: 15,
     paddingBottom: 15,
     marginRight: 15,
     marginBottom: 0,
     borderWidth: 1,
     borderRadius: 10,
     textAlignVertical: "top",
-    width:265
   },
   textNameStyle: {
     fontWeight: "bold",
@@ -255,11 +244,11 @@ const style = StyleSheet.create({
     backgroundColor: '#261863',
   },
   summary: {
-    marginTop: 10,
+    marginTop: 20,
     marginLeft: 9,
     color: "black",
     fontWeight: "bold",
-    fontSize: 15,
+    fontSize: 20,
   },
   filter: {
     marginTop: 10,
